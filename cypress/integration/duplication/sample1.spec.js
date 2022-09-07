@@ -1,5 +1,7 @@
+const { beforeEach } = require("mocha")
+
 describe('Code duplication bad practice - Sample 1', () => {
-  it('searches by typing and hitting enter', () => {
+  beforeEach(() => {
     cy.intercept(
       'GET',
       '**/search**'
@@ -9,9 +11,13 @@ describe('Code duplication bad practice - Sample 1', () => {
     cy.wait('@getStories')
 
     cy.get('input[type="text"]')
+      .as('seachField')
       .should('be.visible')
       .and('have.value', 'redux')
       .clear()
+  }
+  it('searches by typing and hitting enter', () => {
+    cy.get('@serachField')
       .type('frontend testing{enter}')
 
     cy.wait('@getStories')
@@ -21,18 +27,7 @@ describe('Code duplication bad practice - Sample 1', () => {
   })
 
   it('searches by typing and pressing the search button', () => {
-    cy.intercept(
-      'GET',
-      '**/search**'
-    ).as('getStories')
-
-    cy.visit('https://hackernews-seven.vercel.app')
-    cy.wait('@getStories')
-
-    cy.get('input[type="text"]')
-      .should('be.visible')
-      .and('have.value', 'redux')
-      .clear()
+    cy.get('@serachField')
       .type('frontend testing')
 
     cy.contains('button', 'Search')
