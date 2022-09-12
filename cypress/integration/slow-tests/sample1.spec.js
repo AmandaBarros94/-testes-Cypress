@@ -3,6 +3,7 @@ describe('Slow tests bad practice - Sample 1', () => {
     cy.intercept(
       'GET',
       '**/search**'
+      { fixture: 'stories' }
     ).as('getStories')
 
     cy.visit('https://hackernews-seven.vercel.app')
@@ -16,12 +17,13 @@ describe('Slow tests bad practice - Sample 1', () => {
   })
 
   it('searches by typing and hitting enter', () => {
+    const { hits } = require('../../fixture/stories')
     cy.get('@searchField')
       .type('frontend testing{enter}')
 
     cy.wait('@getStories')
 
     cy.get('.table-row')
-      .should('have.length', 100)
+      .should('have.length', hits.lenght)
   })
 })
